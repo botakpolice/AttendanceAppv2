@@ -143,12 +143,37 @@ class UserState extends State<UserPage> {
     
     CollectionReference comCol = FirebaseFirestore.instance.collection('AppDatabase');
     DocumentReference classDoc = comCol.doc(compName);
-    CollectionReference classCol = classDoc.collection(className);
-    classCol.doc(DateFormat('dd MMMM yyyy').format(DateTime.now())).set({
-      name_input_controller.text: FieldValue.serverTimestamp()
-    }, SetOptions(merge: true)).then((value) => print('added info'));
+    //CollectionReference classCol = 
+    classDoc.collection(className).get().then(
+      (QuerySnapshot querySnapshot) {
+        if (querySnapshot.docs.length == 0) {
+          print('class does not exist!');
 
-    Navigator.popAndPushNamed(context, '/$AppPage.userendpage');
+          final snackBar = SnackBar(
+            content: Text('Class does not exist!'),
+            action: SnackBarAction(
+              label: 'Ok',
+              onPressed: () {
+                // Some code to undo the change.
+              },
+            ),
+          );
+
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          
+          return;
+        }
+
+        CollectionReference classCol = classDoc.collection(className);
+        classCol.doc(DateFormat('dd MMMM yyyy').format(DateTime.now())).set({
+          name_input_controller.text: FieldValue.serverTimestamp()
+        }, SetOptions(merge: true)).then((value) => print('added info'));
+
+        Navigator.popAndPushNamed(context, '/$AppPage.userendpage');
+        
+
+      });
+   
 
     // classCol.get().then((QuerySnapshot querySnapshot) => {
     //   querySnapshot.docs.add(value)
