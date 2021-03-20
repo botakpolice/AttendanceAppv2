@@ -16,7 +16,7 @@ class UserPage extends StatefulWidget  {
   @override
   State<StatefulWidget> createState() => UserState();
 }
-
+ 
 class UserState extends State<UserPage> {
 
   final _formKey = GlobalKey<FormState>();
@@ -142,11 +142,11 @@ class UserState extends State<UserPage> {
     print("uid " + FirebaseAuth.instance.currentUser.uid);
     
     CollectionReference comCol = FirebaseFirestore.instance.collection('AppDatabase');
-    DocumentReference classDoc = comCol.doc(uid);
+    DocumentReference classDoc = comCol.doc(compName);
     CollectionReference classCol = classDoc.collection(className);
-    classCol.doc(DateFormat('dd MMMM yyyy').format(DateTime.now())).update({
+    classCol.doc(DateFormat('dd MMMM yyyy').format(DateTime.now())).set({
       name_input_controller.text: FieldValue.serverTimestamp()
-    }).then((value) => print('added info'));
+    }, SetOptions(merge: true)).then((value) => print('added info'));
 
     Navigator.popAndPushNamed(context, '/$AppPage.userendpage');
 
